@@ -14,8 +14,8 @@ class TodoController < BaseController
 
   post '/todos' do
     todo = Todo.new(
-    title:  params[:todo][:title],
-     description: params[:todo][:description]
+        title: params[:todo][:title],
+        description: params[:todo][:description]
     )
     if todo.valid?
       todo.save
@@ -26,11 +26,12 @@ class TodoController < BaseController
       redirect '/'
     end
   end
-  
+
   get '/todos/:id/done' do
     todo = Todo.find_by_id params[:id]
     todo.done = true
     todo.save!
     redirect '/'
-  end  
+  end
 end
+
