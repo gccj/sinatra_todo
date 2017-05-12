@@ -1,5 +1,4 @@
 require 'models/todo'
-require 'json'
 
 class TodoController < BaseController
   get '/' do
