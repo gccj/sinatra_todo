@@ -15,7 +15,6 @@ GEM
     arel (8.0.0)
     backports (3.8.0)
     concurrent-ruby (1.0.5)
-    dotenv (2.2.1)
     haml (5.0.0)
       temple (>= 0.8.0)
       tilt
@@ -54,7 +53,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  dotenv
   haml
   pg
   rake
