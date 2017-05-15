@@ -1,0 +1,7 @@
+/vendor
+/.bundle
+*.sqlite3
+*.pid
+/.sass-cache
+.ruby-version
+.rubocop.yml
