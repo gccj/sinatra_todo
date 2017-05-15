@@ -6,7 +6,7 @@
 * SQLite
 
 ## 準備作業
-1. bundle install --path vender/bundle
+1. bundle install --path vendor/bundle
 2. bundle exec rake db:migrate
 
 ## 利用
