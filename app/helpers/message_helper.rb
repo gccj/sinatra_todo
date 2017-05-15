@@ -11,4 +11,3 @@ module MessageHelper
     session[:error] = nil
   end
 end
-

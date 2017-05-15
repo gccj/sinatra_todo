@@ -13,14 +13,14 @@ class BaseController < Sinatra::Base
     enable :logging
     register Sinatra::Reloader
   end
-  
+
   before do
-   @notice_message = session[:notice]
-   @error_message = session[:error]
-   clear_messages
+    @notice_message = session[:notice]
+    @error_message = session[:error]
+    clear_messages
   end
 
   not_found do
     'Not found'
   end
- end 
+end

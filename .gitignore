@@ -4,3 +4,4 @@
 *.pid
 /.sass-cache
 .ruby-version
+.rubocop.yml

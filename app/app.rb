@@ -9,6 +9,5 @@ require 'controllers/todo'
 class App < Sinatra::Base
   ROUTES = {
     '/' => TodoController
-  }
+  }.freeze
 end
-

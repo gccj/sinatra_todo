@@ -5,13 +5,13 @@ namespace :server do
   desc 'start server'
   task :start do
     cmd = 'bundle exec rackup -o 192.168.33.33 -p 8080 -E development  -P rack.pid'
-    system("#{cmd}")
+    system(cmd.to_s)
   end
 
   desc 'stop server'
   task :stop do
     file_path = File.join(__dir__, 'rack.pid')
-    if File.exist?(file_path) then
+    if File.exist?(file_path)
       File.open(file_path) do |file|
         pid = file.read
         system("kill -9 #{pid}")
@@ -21,5 +21,5 @@ namespace :server do
   end
 
   desc 'restart server'
-  task :restart => [:stop, :start]
+  task restart: %i[stop start]
 end
