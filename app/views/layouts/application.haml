@@ -2,19 +2,48 @@
 %html
   %head
     %link{rel: "stylesheet", href: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", integrity: "sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin: "anonymous"}
+    %link{rel: "stylesheet", type: "text/css", href: "/stylesheets/styles.css"}
+    %script{src: "https://code.jquery.com/jquery-3.2.1.min.js", integrity: "sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin: "anonymous"}
     %script{src: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity: "sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa", crossorigin: "anonymous"}
-
     %title Todo
+
   %body
-    .container
-      .content
-        .row
-          - if @notice_message
-            .alert.alert-info
-              = @notice_message
-          - if @error_message
-            .alert.alert-danger
-              = @error_message
-          = yield
-      %footer
-        %p Copyright &copy; #{Time.now.year} Chen Jun.
+    %nav.navbar.navbar-default.navbar-fixed-top
+      .container-fluid
+        .navbar-header
+          %button{type: "button", class: "navbar-toggle collapsed", "data-toggle" => "collapse", "data-target" => "#navbar", "aria-expanded" => "false", "aria-controls" => "navbar"}
+            %span.sr-only Toggle navigation
+            %span.icon-bar
+            %span.icon-bar
+            %span.icon-bar
+          %a{class: "navbar-brand", href: "/"}
+            - if signed_in?
+              = current_user.full_name
+              の
+            Todoリスト
+        #navbar.navbar-collapse.collapse
+          %ul.nav.navbar-nav.navbar-right
+            - if signed_in?
+              %li
+                %form{action: "/users/sign_out", method: "post", class: "navbar-form"}
+                  %input{type: "hidden", name: "_method", value: "DELETE"}
+                  %button{type: "submit", class: "btn btn-success"}
+                    %span.glyphicon.glyphicon-log-out　ログアウト
+            - else
+              %li
+                %a{class: "glyphicon glyphicon-log-in", href: "/users/sign_in"}　ログイン
+              %li
+                %a{class: "glyphicon glyphicon-user", href: "/users/sign_up"}　ユーザー登録
+
+    .container-fluid
+      .row-fluid
+        - if @notice_message
+          .alert.alert-info
+            = @notice_message
+        - if @error_message
+          .alert.alert-danger
+            = @error_message
+        = yield
+    %footer
+      %p Copyright &copy; #{Time.now.year} Chen Jun.
+

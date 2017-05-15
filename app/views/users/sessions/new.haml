@@ -1,0 +1,16 @@
+.well.col-md-6.col-md-offset-3
+  %form{class: "new_user", id: "new_user", action: "/users/sign_in", "accept-charset" => "UTF-8", method: "post"}
+    %input{name: "utf8", type: "hidden", value:"&#x2713;"}
+    .form-inputs
+    .form-group.email.optional.user_email
+      %label{class: "email optional control-label", for: "user_email"} メールアドレス
+      %input{class: "string email optional form-control", autofocus: "autofocus", type: "email", value: "", name: "user[email]", id: "user_email"}
+
+    .form-group.password.optional.user_password
+      %label{class: "password optional control-label", for: "user_password"} パスワード
+      %input{class: "password optional form-control", type: "password", name: "user[password]", id: "user_password"}
+    .form-actions
+      %input{type: "submit", name: "commit", value: "ログイン", class: "btn btn-default btn btn-block btn-success", 'data-disable-with' => "ログイン"}
+  .little-font
+    OR
+  %a{class: "btn btn-block btn-primary", href: "/users/sign_up", value: 'ユーザー登録'} ユーザー登録

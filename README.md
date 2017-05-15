@@ -1,8 +1,8 @@
 # Todo アプリ
 
-## 開発環境 
-* Ruby 2.4.1 
-* CentOS 7.0 
+## 開発環境
+* Ruby 2.4.1
+* CentOS 7.0
 * SQLite
 
 ## 準備作業

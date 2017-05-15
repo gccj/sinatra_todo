@@ -5,5 +5,8 @@
     %input{error: "タイトルを入力しください", placeholder: "牛乳を購入", class: "form-control", required: "required", type: "text", name: "todo[title]", id: "todo_title"}
     %label 詳細
     %textarea{error: "詳細を入力しください", placeholder: "イオンで明治おいしい牛乳4本", class: "form-control", required: "required", name: "todo[description]", id: "todo_description"}
+    %label
+      %input{type: "checkbox", value: "published", name: "todo[role]"}　公開する
   .form-group
     %input{type: "submit", name: "commit", value: "登録", class: "button btn btn-block btn-primary", "data-disable-with" => "登録"}
+

@@ -5,7 +5,7 @@ namespace :server do
   desc 'start server'
   task :start do
     cmd = 'bundle exec rackup -o 192.168.33.33 -p 8080 -E development  -P rack.pid'
-    system(cmd.to_s)
+    system cmd
   end
 
   desc 'stop server'

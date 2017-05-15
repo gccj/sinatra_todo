@@ -1,0 +1,39 @@
+%h1{class: "page-header"} Todo
+.col-lg-4
+  = haml :'todos/form', layout: false
+.col-lg-8.col-offset-4
+  %ul.nav.nav-tabs
+    %li
+      %a{href: "/todos", titile: "未完了"} 未完了
+    %li
+      %a{href: "/todos/completed_items", titile: "完了"} 完了
+    %li
+      %a{href: "/todos/shared_items", titile: "共有リスト"} 共有リスト
+  -if @todos.any?
+    %h4{class: 'sub-header'}
+    %table{class: "table table-hover"}
+      %thead{class: "thead-inverse"}
+        %tr
+          %th　タイトル
+          %th 詳細
+      %tbody
+        - @todos.each do |todo|
+          %tr{scope:"row"}
+            %td
+              = todo.title
+              - if todo.published?
+                %span{class: 'label label-primary'}共有
+              - if @share && todo.user_id == current_user.id
+                %span{class: 'label label-success'}自分
+            %td
+              = todo.description
+            - unless todo.done || @share
+              %td
+                %a{href: "/todos/#{todo.id}/done", class: "btn btn-success pull-right", titile: "完了"} 完了
+              %td
+                %form{action: "/todos/#{todo.id}", method: "post", class: ""}
+                  %input{type: "hidden", name: "_method", value: "DELETE"}
+                  %button{type: "submit", class: "btn btn-danger"} 削除
+  -else
+    .well
+      %h4.empty_msg この人何も残していない！
