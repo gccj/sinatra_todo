@@ -1,7 +1,7 @@
-class Todo < ActiveRecord::Base
+class Todo < ORM::Base
   belongs_to :user
-  validates :title, :description, presence: true
-  enum role: %i[individual published]
+  # validates :title, :description, presence: true
+  # enum role: %i[individual published]
 
   def self.shared_items
     where('role = ?', Todo.roles[:published])

@@ -1,3 +1,6 @@
 development:
-  adapter: sqlite3
-  database: db/todo_app.sqlite3
+  adapter: mysql2
+  host: localhost
+  database: todoapp_db
+  username: todoapp
+  password: 12345678

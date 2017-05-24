@@ -1,5 +1,5 @@
 require 'sinatra'
-require 'sinatra/activerecord'
+require 'base'
 if development?
   require 'sinatra/reloader'
   require 'pry'
