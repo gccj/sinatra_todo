@@ -18,8 +18,23 @@ module ORM
       @target_class.class_eval { find(query) }
     end
 
-    def build
+    def find_by(**query)
+      query.merge! sql_restriction
+      @target_class.class_eval { find_by(query) }
+    end
+
+    def first
       parent_info = sql_restriction
+      @target_class.class_eval { first(conditions: parent_info) }
+    end
+
+    def last
+      parent_info = sql_restriction
+      @target_class.class_eval { last(conditions: parent_info) }
+    end
+
+    def build(props = {})
+      parent_info = sql_restriction.merge props
       @target_class.class_eval { new(parent_info) }
     end
 

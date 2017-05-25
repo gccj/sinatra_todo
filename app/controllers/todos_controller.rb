@@ -42,6 +42,7 @@ class TodosController < BaseController
   end
 
   get '/:id/done' do
+    # #FIXME:sql_bugs
     todo = current_user.search_todo params[:id]
     if todo && todo.undone?
       todo.done!
@@ -52,11 +53,11 @@ class TodosController < BaseController
     redirect '/todos'
   end
 
-  get '/shared_items' do
-    @todos = Todo.shared_items
-    @share = true
-    last_modified @todos.maximum(:updated_at)
-    cache_control :public
-    haml :'todos/index'
-  end
+  # get '/shared_items' do
+  # @todos = Todo.shared_items
+  # @share = true
+  # last_modified @todos.maximum(:updated_at)
+  # cache_control :public
+  # haml :'todos/index'
+  # end
 end

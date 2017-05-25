@@ -19,7 +19,7 @@ module AuthenticationHelper
   end
 
   def current_user
-    @user ||= User.find_by id: session[:user][:id]
+    @user ||= session[:user]
   end
 
   def redirect_to_original_request

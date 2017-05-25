@@ -4,12 +4,18 @@ class Todo < ORM::Base
   # enum role: %i[individual published]
 
   def self.shared_items
-    where('role = ?', Todo.roles[:published])
+    # where(role: Todo.roles[:published])
+  end
+
+  alias done_getter done
+
+  def done
+    !done_getter.zero?
   end
 
   def done!
-    self.done = true
-    save!
+    done = true
+    save
   end
 
   def undone?

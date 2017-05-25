@@ -7,8 +7,6 @@
       %a{href: "/todos", titile: "未完了"} 未完了
     %li
       %a{href: "/todos/completed_items", titile: "完了"} 完了
-    %li
-      %a{href: "/todos/shared_items", titile: "共有リスト"} 共有リスト
   -if @todos.any?
     %h4{class: 'sub-header'}
     %table{class: "table table-hover"}
@@ -21,10 +19,6 @@
           %tr{scope:"row"}
             %td
               = todo.title
-              - if todo.published?
-                %span{class: 'label label-primary'}共有
-              - if @share && todo.user_id == current_user.id
-                %span{class: 'label label-success'}自分
             %td
               = todo.description
             - unless todo.done || @share

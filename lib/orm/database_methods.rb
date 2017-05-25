@@ -10,40 +10,75 @@ module ORM
       end
 
       def sql_parse(query = {})
-        binding.pry
         query.map do |key, value|
-          "#{key}='#{database_delegate.escape(value.to_s)}'"
+          if value.to_s.casecmp('true').zero? || value.to_s.casecmp('false').zero?
+            "#{key}=#{database_delegate.escape(value.to_s)}"
+          else
+            "#{key}='#{database_delegate.escape(value.to_s)}'"
+          end
         end.join(' and ')
       end
 
+      def table_name
+        "#{name.downcase!}s"
+      end
+
       def columns_sql
-        database_delegate.query("describe #{self.name.downcase}s").to_a
+        database_delegate.query("describe #{table_name}").to_a
       end
 
       def where_query(query = {})
         query_string = sql_parse query
-        "SELECT * FROM #{name.downcase!}s WHERE #{query_string}"
+        "SELECT * FROM #{table_name} WHERE #{query_string}"
       end
 
       def find_query(query = {})
-        "#{where_query(query)}"
+        where_query(query).to_s
       end
 
       def find_all_query
-        "SELECT * FROM #{name.downcase!}s"
+        "SELECT * FROM #{table_name}"
       end
 
-      def save_sql(tables, props)
+      def first_sql(limit: 1, conditions: {})
+        if conditions.empty?
+          database_delegate.query("SELECT * FROM #{table_name} LIMIT #{limit.to_i}").to_a
+        else
+          conditions_string = sql_parse conditions
+          database_delegate.query("SELECT * FROM #{table_name} WHERE #{conditions_string} LIMIT #{limit.to_i}").to_a
+        end
+      end
+
+      def last_sql(limit: 1, conditions: {})
+        if conditions.empty?
+          database_delegate.query("SELECT * FROM #{table_name} ORDER BY 'id' DESC LIMIT #{limit.to_i}").to_a
+        else
+          conditions_string = sql_parse conditions
+          database_delegate.query("SELECT * FROM #{table_name} WHERE #{conditions_string} ORDER BY 'id' DESC LIMIT #{limit.to_i}").to_a
+        end
+      end
+
+      def save_sql(props)
         columns = props.keys.join(',')
-        values = props.values.map {|value| "'#{database_delegate.escape(value.to_s)}'"}.join(',')
-        binding.pry
-        database_delegate.query("INSERT INTO #{tables} (#{columns}) VALUES (#{values})")
+        values = props.values.map do |value|
+          if value.to_s.casecmp('true').zero? || value.to_s.casecmp('false').zero?
+            database_delegate.escape(value.to_s).to_s
+          else
+            "'#{database_delegate.escape(value.to_s)}'"
+          end
+        end.join(',')
+        database_delegate.query("INSERT INTO #{table_name} (#{columns}) VALUES (#{values})")
+        database_delegate.last_id
       end
 
-      def update_sql(tables, props, id)
+      def update_sql(props, id)
         props = sql_parse props
-        binding.pry
-        database_delegate.query("UPDATE #{tables} SET #{props} WHERE id=#{id}")
+        database_delegate.query("UPDATE #{table_name} SET #{props} WHERE id=#{id}")
+        database_delegate.last_id
+      end
+
+      def delete_sql(id)
+        database_delegate.query("DELETE FROM #{table_name} WHERE id=#{id}")
       end
 
       def execute_sql(query_string)
@@ -62,4 +97,3 @@ module ORM
     end
   end
 end
-
