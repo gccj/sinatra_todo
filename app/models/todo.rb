@@ -14,8 +14,9 @@ class Todo < ORM::Base
   end
 
   def done!
-    done = true
-    save
+    # done = true
+    # save
+    update('done' => true)
   end
 
   def undone?

@@ -8,28 +8,28 @@
           %label{class: "string required control-label", for: "user_email"}
             %abbr{title: "必須"}*(必須)
             メールアドレス
-          %input{class: "string required form-control", autofocus: "autofocus", type: "email", value: "", name: "user[email]", id: "user_email"}
+          %input{class: "string required form-control", autofocus: "autofocus", type: "email", value: "", name: "user[email]", id: "user_email", required: "required"}
         .form-group.string.required.user_first_name
           %label{class: "string required control-label", for: "user_first_name"}
             %abbr{title: "必須"}*(必須)
             姓
-          %input{class: "string required form-control", type: "text", name: "user[first_name]", id: "user_first_name"}
+          %input{class: "string required form-control", type: "text", name: "user[first_name]", id: "user_first_name", required: "required"}
         .form-group.string.required.user_first_name
           %label{class: "string required control-label", for: "user_last_name"}
             %abbr{title: "必須"}*(必須)
             名
-          %input{class: "string required form-control", type: "text", name: "user[last_name]", id: "user_last_name"}
+          %input{class: "string required form-control", type: "text", name: "user[last_name]", id: "user_last_name", required: "required"}
         .form-group.password.user_password
           %label{class: "password control-label", for: "user_password"}
             %abbr{title: "必須"}
             *(必須)
             パスワード
-          %input{class: "password form-control", type: "password", name: "user[password]", id: "user_password"}
+          %input{class: "password form-control", type: "password", name: "user[password]", id: "user_password", required: "required"}
         .form-group.password.user_password_confirmation
           %label{class: "password_confirmation control-label", for: "user_password_confirmation"}
             %abbr{title: "必須"}
             *(必須)
             パスワード再入力
-          %input{class: "password_confirmation form-control", type: "password", name: "user[password_confirmation]", id: "user_password_confirmation"}
+          %input{class: "password_confirmation form-control", type: "password", name: "user[password_confirmation]", id: "user_password_confirmation", required: "required"}
         .form-actions
           %input{type: "submit", name: "commit", value: "登録", class: "btn btn-default btn btn-block btn-primary", 'data-disable-with' => "登録中。。。"}

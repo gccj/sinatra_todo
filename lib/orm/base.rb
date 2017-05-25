@@ -61,6 +61,7 @@ module ORM
         define_method(:update) do |params|
           params.delete('id')
           params.keep_if { |key, _value| respond_to? "#{key}=" }
+          # params.merge!({'updated_at' => Time.now})
           self.class.update_sql params, id
         end
 
