@@ -42,7 +42,6 @@ class TodosController < BaseController
   end
 
   get '/:id/done' do
-    # #FIXME:sql_bugs
     todo = current_user.search_todo params[:id]
     if todo && todo.undone?
       todo.done!
