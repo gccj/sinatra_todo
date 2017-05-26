@@ -1,10 +1,10 @@
 class Todo < ORM::Base
   belongs_to :user
   # validates :title, :description, presence: true
-  # enum role: %i[individual published]
+  enum role: %i[individual published]
 
   def self.shared_items
-    # where(role: Todo.roles[:published])
+    where(role: Todo.roles[:published])
   end
 
   alias done_getter done

@@ -42,4 +42,4 @@ class User < ORM::Base
   def authenticate(password)
     self.password == password
   end
-  end
+end

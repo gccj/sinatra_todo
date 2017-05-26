@@ -8,6 +8,11 @@ module ORM
       @sql_query = []
     end
 
+    def all
+      parent_info = sql_restriction
+      @target_class.class_eval { all(conditions: parent_info) }
+    end
+
     def where(**query)
       query.merge! sql_restriction
       @target_class.class_eval { where(query) }
@@ -34,8 +39,8 @@ module ORM
     end
 
     def build(props = {})
-      parent_info = sql_restriction.merge props
-      @target_class.class_eval { new(parent_info) }
+      attributes = sql_restriction.merge props
+      @target_class.class_eval { new(attributes) }
     end
 
     def sql_restriction

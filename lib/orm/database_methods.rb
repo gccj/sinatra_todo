@@ -36,8 +36,13 @@ module ORM
         where_query(query).to_s
       end
 
-      def find_all_query
-        "SELECT * FROM #{table_name}"
+      def find_all_query(conditions: {})
+        if conditions.empty?
+          "SELECT * FROM #{table_name}"
+        else
+          conditions_string = sql_parse conditions
+          "SELECT * FROM #{table_name} WHERE #{conditions_string}"
+        end
       end
 
       def first_sql(limit: 1, conditions: {})

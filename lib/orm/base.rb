@@ -84,11 +84,46 @@ module ORM
         end
       end
 
-      def enum(*hash); end
+      def enum(**hash)
+        enum_array = hash.first
+        attr = enum_array.shift.to_s
+        method_name = "#{attr}s"
+        const_key = method_name.upcase
+        attr_hash = Hash[enum_array.flatten!.map.with_index { |key, index| [key, index] }]
+        const_set(const_key, attr_hash)
+        define_singleton_method(method_name) do
+          const_get const_key
+        end
+        alias_method :"#{attr}_getter", :"#{attr}"
+        define_method(attr) do
+          self.class.send(method_name).key(send("#{attr}_getter")).to_s
+        end
 
-      def all
-        instance_array = execute_sql(find_all_query)
-        unless instance_array.empty?
+        alias_method :"#{attr}_setter", :"#{attr}="
+        define_method("#{attr}=") do |value|
+          if value.is_a? Integer
+            send("#{attr}_setter", value)
+          else
+            send("#{attr}_setter", self.class.send(method_name)[value.to_sym])
+          end
+        end
+
+        attr_hash.each do |key, value|
+          define_method("#{key}?") do
+            send("#{attr}_getter") == value
+          end
+
+          define_method("#{key}!") do
+            update(attr.to_s => value)
+          end
+        end
+      end
+
+      def all(**conditions)
+        instance_array = execute_sql(find_all_query(conditions))
+        if instance_array.empty?
+          []
+        else
           instance_array.map do |instance|
             new instance
           end

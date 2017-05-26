@@ -53,11 +53,9 @@ class TodosController < BaseController
     redirect '/todos'
   end
 
-  # get '/shared_items' do
-  # @todos = Todo.shared_items
-  # @share = true
-  # last_modified @todos.maximum(:updated_at)
-  # cache_control :public
-  # haml :'todos/index'
-  # end
+  get '/shared_items' do
+    @todos = Todo.shared_items
+    @share = true
+    haml :'todos/index'
+  end
 end
