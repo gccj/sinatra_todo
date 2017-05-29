@@ -79,7 +79,6 @@ module ORM
       def update_sql(props, id)
         props = sql_parse props
         database_delegate.query("UPDATE #{table_name} SET #{props} WHERE id=#{id}")
-        binding.pry
         database_delegate.last_id
       end
 

@@ -1,6 +1,5 @@
 module ORM
   class HasManyAssociation
-
     def initialize(parent, name)
       @parent = parent
       @target_class = Object.const_get name
