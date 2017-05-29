@@ -1,6 +1,5 @@
 module ORM
   class HasManyAssociation
-    include ORM::DatabaseMethods
 
     def initialize(parent, name)
       @parent = parent

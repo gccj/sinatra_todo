@@ -101,7 +101,7 @@ module ORM
 
         alias_method :"#{attr}_setter", :"#{attr}="
         define_method("#{attr}=") do |value|
-          if value.is_a? Integer
+          if !value || value.is_a?(Integer)
             send("#{attr}_setter", value)
           else
             send("#{attr}_setter", self.class.send(method_name)[value.to_sym])
