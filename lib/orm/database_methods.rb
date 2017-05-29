@@ -73,21 +73,26 @@ module ORM
           end
         end.join(',')
         database_delegate.query("INSERT INTO #{table_name} (#{columns}) VALUES (#{values})")
-        database_delegate.last_id
+        successfully_changed?
       end
 
       def update_sql(props, id)
         props = sql_parse props
         database_delegate.query("UPDATE #{table_name} SET #{props} WHERE id=#{id}")
-        database_delegate.last_id
+        successfully_changed?
       end
 
       def delete_sql(id)
         database_delegate.query("DELETE FROM #{table_name} WHERE id=#{id}")
+        successfully_changed?
       end
 
       def execute_sql(query_string)
         database_delegate.query("#{query_string} ORDER BY created_at DESC", symbolize_keys: true).to_a
+      end
+
+      def successfully_changed?
+        !database_delegate.affected_rows.zero?
       end
     end
 
