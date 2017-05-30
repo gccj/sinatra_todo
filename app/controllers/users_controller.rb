@@ -43,7 +43,7 @@ class UsersController < BaseController
     user_params = params[:user]
     user = User.new user_params
     if user.save
-      sign_in user
+      sign_in User.find_by email: user.email
       flash type: :notice, messages: 'ご登録ありがとうございます'
       redirect '/todos'
     else
