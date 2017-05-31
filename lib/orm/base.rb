@@ -4,9 +4,9 @@ require 'pry'
 
 module ORM
   class Base
-    def self.inherited(kclass)
-      kclass.extend ClassMethods
-      kclass.set_attributes
+    def self.inherited(klass)
+      klass.extend ClassMethods
+      klass.set_attributes
     end
 
     module ClassMethods
@@ -80,17 +80,17 @@ module ORM
         end
       end
 
-      def has_many(kclasss)
-        define_method(kclasss) do
-          target_class = kclasss.to_s.capitalize
+      def has_many(klasss)
+        define_method(klasss) do
+          target_class = klasss.to_s.capitalize
           target_class.slice!(-1)
           @associations ||= ORM::HasManyAssociation.new(self, target_class)
         end
       end
 
-      def belongs_to(kclass)
-        define_method(kclass) do
-          Object.const_get(kclass.capitalize).find_by(id: send("#{kclass}_id"))
+      def belongs_to(klass)
+        define_method(klass) do
+          Object.const_get(klass.capitalize).find_by(id: send("#{klass}_id"))
         end
       end
 
@@ -131,24 +131,22 @@ module ORM
 
       def all(**conditions)
         instance_array = execute_sql(find_all_query(conditions))
-        if instance_array.empty?
-          []
-        else
-          instance_array.map do |instance|
+        if instance_array.any?
+          instance_array = instance_array.map do |instance|
             new instance
           end
         end
+        instance_array
       end
 
       def where(**query)
         instance_array = execute_sql(where_query(query))
-        if instance_array.empty?
-          []
-        else
-          instance_array.map do |instance|
+        if instance_array.any?
+          instance_array = instance_array.map do |instance|
             new instance
           end
         end
+        instance_array
       end
 
       def find(**query)
@@ -157,7 +155,7 @@ module ORM
       end
 
       def find_by(**query)
-        where(query).first
+        where(query.merge(limit: 1)).first
       end
 
       def first(**conditions)

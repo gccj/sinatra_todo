@@ -4,19 +4,25 @@ require 'pry'
 
 module ORM
   module DatabaseMethods
-    def self.included(_kclass)
+    def self.included(_klass)
       def database_delegate
         ORM::DatabaseMethods.delegate
       end
 
+      def escape(value)
+        database_delegate.escape(value.to_s)
+      end
+
+      def boolean_parse(value)
+        if value.to_s.casecmp('true').zero? || value.to_s.casecmp('false').zero?
+          escape(value).to_s
+        else
+          "'#{escape(value)}'"
+        end
+      end
+
       def sql_parse(query = {})
-        query.map do |key, value|
-          if value.to_s.casecmp('true').zero? || value.to_s.casecmp('false').zero?
-            "#{key}=#{database_delegate.escape(value.to_s)}"
-          else
-            "#{key}='#{database_delegate.escape(value.to_s)}'"
-          end
-        end.join(' and ')
+        query.map { |key, value| "#{key}= #{boolean_parse value}" }.join(' AND ')
       end
 
       def table_name
@@ -33,15 +39,15 @@ module ORM
       end
 
       def order_clause(by: 'created_at', order: 'DESC')
-        "ORDER BY #{by} #{order}"
+        "ORDER BY #{escape(by)} #{escape(order)}"
       end
 
       def limit_clause(num = 1)
         "LIMIT #{num.to_i}"
       end
 
-      def from_clause(table: table_name)
-        "FROM #{table}"
+      def from_clause
+        "FROM #{table_name}"
       end
 
       def select_clause(columns: '*')
@@ -53,15 +59,15 @@ module ORM
         query_hash = default_option.merge(query)
         order = query_hash.delete(:order)
         limit = query_hash.delete(:limit)
-        query_string = [select_clause, from_clause].join(' ')
-        query_string = [query_string, where_clause(query_hash)].join(' ') if query_hash.any?
-        query_string = [query_string, order_clause { order }].join(' ')
-        query_string = [query_string, limit_clause(limit)].join(' ') if limit > 0
+        query_string = "#{select_clause} #{from_clause}"
+        query_string = "#{query_string} #{where_clause(query_hash)}" if query_hash.any?
+        query_string = "#{query_string} #{order_clause(order)}"
+        query_string = "#{query_string} #{limit_clause(limit)}" if limit > 0
         query_string
       end
 
       def find_query(query = {})
-        where_query(query)
+        where_query(query.merge(limit: 1))
       end
 
       def find_all_query(conditions: {})
@@ -78,13 +84,7 @@ module ORM
 
       def save_sql(props)
         columns = props.keys.join(',')
-        values = props.values.map do |value|
-          if value.to_s.casecmp('true').zero? || value.to_s.casecmp('false').zero?
-            database_delegate.escape(value.to_s).to_s
-          else
-            "'#{database_delegate.escape(value.to_s)}'"
-          end
-        end.join(',')
+        values = props.values.map { |value| boolean_parse value }.join(',')
         database_delegate.query("INSERT INTO #{table_name} (#{columns}) VALUES (#{values})")
         successfully_changed?
       end
