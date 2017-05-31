@@ -61,7 +61,6 @@ module ORM
         define_method(:update) do |params|
           params.delete('id')
           params.keep_if { |key, _value| respond_to? "#{key}=" }
-          # params.merge!({'updated_at' => Time.now})
           self.class.update_sql params, id
         end
 
@@ -80,7 +79,7 @@ module ORM
 
       def belongs_to(kclass)
         define_method(kclass) do
-          Object.const_get(kclass.capitalize).find_by(id: id)
+          Object.const_get(kclass.capitalize).find_by(id: send("#{kclass}_id"))
         end
       end
 
@@ -151,12 +150,12 @@ module ORM
       end
 
       def first(**conditions)
-        instance_hash = first_sql(conditions).first
+        instance_hash = execute_sql(first_query(conditions)).first
         new(instance_hash) if instance_hash
       end
 
       def last(**conditions)
-        instance_hash = last_sql(conditions).first
+        instance_hash = execute_sql(last_query(conditions)).first
         new(instance_hash) if instance_hash
       end
     end

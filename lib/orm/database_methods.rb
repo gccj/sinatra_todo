@@ -27,40 +27,53 @@ module ORM
         database_delegate.query("describe #{table_name}").to_a
       end
 
+      def where_clause(conditions = {})
+        query_string = sql_parse conditions
+        "WHERE #{query_string}"
+      end
+
+      def order_clause(by: 'created_at', order: 'DESC')
+        "ORDER BY #{by} #{order}"
+      end
+
+      def limit_clause(num = 1)
+        "LIMIT #{num.to_i}"
+      end
+
+      def from_clause(table: table_name)
+        "FROM #{table}"
+      end
+
+      def select_clause(columns: '*')
+        "SELECT #{columns}"
+      end
+
       def where_query(query = {})
-        query_string = sql_parse query
-        "SELECT * FROM #{table_name} WHERE #{query_string}"
+        default_option = { order: {}, limit: 0 }
+        query_hash = default_option.merge(query)
+        order = query_hash.delete(:order)
+        limit = query_hash.delete(:limit)
+        query_string = [select_clause, from_clause].join(' ')
+        query_string = [query_string, where_clause(query_hash)].join(' ') if query_hash.any?
+        query_string = [query_string, order_clause { order }].join(' ')
+        query_string = [query_string, limit_clause(limit)].join(' ') if limit > 0
+        query_string
       end
 
       def find_query(query = {})
-        where_query(query).to_s
+        where_query(query)
       end
 
       def find_all_query(conditions: {})
-        if conditions.empty?
-          "SELECT * FROM #{table_name}"
-        else
-          conditions_string = sql_parse conditions
-          "SELECT * FROM #{table_name} WHERE #{conditions_string}"
-        end
+        where_query conditions
       end
 
-      def first_sql(limit: 1, conditions: {})
-        if conditions.empty?
-          database_delegate.query("SELECT * FROM #{table_name} LIMIT #{limit.to_i}").to_a
-        else
-          conditions_string = sql_parse conditions
-          database_delegate.query("SELECT * FROM #{table_name} WHERE #{conditions_string} LIMIT #{limit.to_i}").to_a
-        end
+      def first_query(conditions: {})
+        where_query(conditions.merge(order: { by: 'id', order: 'ASC' }, limit: 1))
       end
 
-      def last_sql(limit: 1, conditions: {})
-        if conditions.empty?
-          database_delegate.query("SELECT * FROM #{table_name} ORDER BY 'id' DESC LIMIT #{limit.to_i}").to_a
-        else
-          conditions_string = sql_parse conditions
-          database_delegate.query("SELECT * FROM #{table_name} WHERE #{conditions_string} ORDER BY 'id' DESC LIMIT #{limit.to_i}").to_a
-        end
+      def last_query(conditions: {})
+        where_query(conditions.merge(order: { by: 'id' }, limit: 1))
       end
 
       def save_sql(props)
@@ -88,7 +101,7 @@ module ORM
       end
 
       def execute_sql(query_string)
-        database_delegate.query("#{query_string} ORDER BY created_at DESC", symbolize_keys: true).to_a
+        database_delegate.query(query_string.to_s, symbolize_keys: true).to_a
       end
 
       def successfully_changed?
