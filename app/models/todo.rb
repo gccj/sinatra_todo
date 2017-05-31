@@ -7,15 +7,7 @@ class Todo < ORM::Base
     where(role: Todo.roles[:published])
   end
 
-  alias done_getter done
-
-  def done
-    !done_getter.zero?
-  end
-
   def done!
-    # done = true
-    # save
     update('done' => true)
   end
 

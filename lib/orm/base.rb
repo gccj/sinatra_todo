@@ -21,15 +21,26 @@ module ORM
       end
 
       def columns
-        @columns = columns_sql.map { |column| column['Field'] }
+        @columns = {}
+        columns_sql.each { |column| @columns[column['Field']] = column['Type'] }
+        @columns
+      end
+
+      def as_boolean(attr)
+        alias_method "#{attr}_getter".to_sym, attr.to_sym
+        define_method(attr) do
+          prop = send("#{attr}_getter")
+          !prop.zero? if prop
+        end
       end
 
       def set_attributes
-        columns.each do |attr|
+        columns.each do |attr, type|
           attr_accessor attr
           define_singleton_method("find_by_#{attr}") do |query|
             find(attr.to_sym => query)
           end
+          as_boolean attr if type == 'tinyint(1)'
         end
 
         define_method(:initialize) do |hash = {}|
@@ -53,7 +64,7 @@ module ORM
             self.created_at ||= Time.now
             self.updated_at = self.created_at
             allow_attributes = attributes
-            (allow_attributes.keys - self.class.columns).each { |attr| allow_attributes.delete attr }
+            (allow_attributes.keys - self.class.columns.keys).each { |attr| allow_attributes.delete attr }
             self.class.save_sql allow_attributes
           end
         end
